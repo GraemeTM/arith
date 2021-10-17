@@ -61,9 +61,11 @@ all: ppmdiff
 
 
 ## Linking step (.o -> executable program)
-ppmdiff: ppmdiff.o a2plain.o uarray2.o 
+ppmdiff: ppmdiff.o a2plain.o uarray2.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
+cmtest: cmtest.o color_math.o
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 clean:
 	rm -f ppmdiff *.o
