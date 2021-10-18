@@ -1,16 +1,43 @@
 #ifndef COLORMATH_INCLUDED
 #define COLORMATH_INCLUDED
 
-typedef struct color_T {
-  float val1; /* red or Y value */
-  float val2; /* blue or Pb value */
-  float val3; /* green or Pr value */
-} *color_T;
+/* We use two different structs here for clarity and modularity */
+
+/* Used for storing normalized [0, 1] RGB color representation */
+typedef struct rgb_T {
+    float red;
+    float green;
+    float blue;
+} rgb_T;
+
+/* Stores YPbPr representation */
+typedef struct ypp_T {
+    float Y;
+    float Pb;
+    float Pr;
+} ypp_T;
+
+typedef struct DCTSpace_T {
+    float a;
+    float b;
+    float c;
+    float d;
+} DCTSpace_T;
+
+typedef struct PixSpace_T {
+    float y1;
+    float y2;
+    float y3;
+    float y4;
+} PixSpace_T;
 
 /* r, g, b must be normalized to range [0.0, 1.0] */
-extern color_T rgb_to_ypp(float r, float g, float b);
+extern ypp_T rgb_to_ypp(rgb_T rgb);
 
-extern color_T ypp_to_rgb(float y, float pb, float pr);
+extern rgb_T ypp_to_rgb(ypp_T ypp);
 
-extern
+extern DCTSpace_T get_DCT_space(PixSpace_T pixspace);
+
+extern PixSpace_T get_pix_space(DCTSpace_T dctspace);
+
 #endif

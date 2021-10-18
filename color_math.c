@@ -1,27 +1,54 @@
 #include <stdlib.h>
 #include "assert.h"
 #include "color_math.h"
+#include "math.h"
 
-
-color_T rgb_to_ypp(float r, float g, float b)
+ypp_T rgb_to_ypp(rgb_T rgb)
 {
-  color_T ypp = malloc(sizeof(ypp));
-  assert(ypp != NULL);
-  assert(r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1);
+    float r = rgb.red, b = rgb.blue, g = rgb.green;
+    assert(r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1);
 
-  ypp->val1 = 0.299 * r + 0.587 * g + 0.114 * b;
-  ypp->val2 = -0.168736 * r - 0.331264 * g + 0.5 * b;
-  ypp->val3 = 0.5 * r - 0.418688 * g - 0.081312 * b;
-  return ypp;
+    ypp_T ypp;
+    ypp.Y = 0.299 * r + 0.587 * g + 0.114 * b;
+    ypp.Pb = -0.168736 * r - 0.331264 * g + 0.5 * b;
+    ypp.Pr = 0.5 * r - 0.418688 * g - 0.081312 * b;
+    return ypp;
 }
 
-color_T ypp_to_rgb(float y, float pb, float pr)
+rgb_T ypp_to_rgb(ypp_T ypp)
 {
-  color_T rgb = malloc(sizeof(rgb));
-  assert(rgb != NULL);
+    float y = ypp.Y, pb = ypp.Pb, pr = ypp.Pr;
 
-  rgb->val1 = 1.0 * y + 0.0 * pb + 1.402 * pr;
-  rgb->val2 = 1.0 * y - 0.344136 * pb - 0.714136 * pr;
-  rgb->val3 = 1.0 * y + 1.772 * pb + 0.0 * pr;
-  return rgb;
+    rgb_T rgb;
+    /* Use fabs cast to make sure we don't have any negative 0s */
+    rgb.red = fabs(1.0 * y + 0.0 * pb + 1.402 * pr);
+    rgb.green = fabs(1.0 * y - 0.344136 * pb - 0.714136 * pr);
+    rgb.blue = fabs(1.0 * y + 1.772 * pb + 0.0 * pr);
+    return rgb;
+}
+
+DCTSpace_T get_DCT_space(PixSpace_T pixspace)
+{
+    float y1 = pixspace.y1, y2 = pixspace.y2;
+    float y3 = pixspace.y3, y4 = pixspace.y4;
+
+    DCTSpace_T dct;
+    dct.a = (y4 + y3 + y2 + y1) / 4.0;
+    dct.b = (y4 + y3 - y2 - y1) / 4.0;
+    dct.c = (y4 - y3 + y2 - y1) / 4.0;
+    dct.d = (y4 - y3 - y2 + y1) / 4.0;
+    return dct;
+}
+
+PixSpace_T get_pix_space(DCTSpace_T dctspace)
+{
+    float a = dctspace.a, b = dctspace.b, c = dctspace.c, d = dctspace.d;
+
+    PixSpace_T pix;
+    pix.y1 = a - b - c + d;
+    pix.y2 = a - b + c - d;
+    pix.y3 = a + b - c - d;
+    pix.y4 = a + b + c + d;
+
+    return pix;
 }
