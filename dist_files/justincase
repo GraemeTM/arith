@@ -1,0 +1,21 @@
+ // free old pixmap
+    methods->free(&(original->pixels));
+
+    /* new pixmap to put into Pnm_ppm struct */
+    A2Methods_UArray2 new_pixmap = methods->new_with_blocksize();
+
+    for(int c = 0; c < new_width; c++) 
+    {
+        for(int r = 0; r < new_height; r++)
+        {
+            methods->at(new_pixmap, c, r) = methods->at(original->pixels, c, r);
+            *((Pnm_rgb)methods->at(new_pixmap->pixels, c, r)) =
+                *((Pnm_rgb)methods->at(original->pixels, c, r));
+        }
+    }
+    
+    
+    /* Re-assign ppm values to print out */
+    original->pixels = new_pixmap;
+    original->width = new_width;
+    original->height = new_height;

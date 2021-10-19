@@ -22,4 +22,6 @@ int main()
     printf("[%1.2f, %1.2f, %1.2f, %1.2f]\n",
             pix.y1, pix.y2, pix.y3, pix.y4);
 
+    float avg = get_avg_four(1.0, 2.0, 3.0, 4.0);
+    printf("average: %1.2f\n", avg);
 }

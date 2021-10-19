@@ -40,4 +40,6 @@ extern DCTSpace_T get_DCT_space(PixSpace_T pixspace);
 
 extern PixSpace_T get_pix_space(DCTSpace_T dctspace);
 
+extern float get_avg_four(float a, float b, float c, float d);
+
 #endif
