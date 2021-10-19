@@ -15,10 +15,11 @@ int main()
     PixSpace_T pix = {.y1 = 1.0, .y2 = 0.0, .y3 = 1.0, .y4 = 0.0};
 
     DCTSpace_T dct = get_DCT_space(pix);
-    printf("[%1.2f, %1.2f, %1.2f, %1.2f]\n", 
+    printf("[%1.2f, %1.2f, %1.2f, %1.2f]\n",
             dct.a, dct.b, dct.c, dct.d);
 
     pix = get_pix_space(dct);
-    printf("[%1.2f, %1.2f, %1.2f, %1.2f]\n", 
+    printf("[%1.2f, %1.2f, %1.2f, %1.2f]\n",
             pix.y1, pix.y2, pix.y3, pix.y4);
+
 }
