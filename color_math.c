@@ -52,3 +52,9 @@ PixSpace_T get_pix_space(DCTSpace_T dctspace)
 
     return pix;
 }
+
+float get_avg_four(float a, float b, float c, float d)
+{
+    float avg = (a + b + c + d) / 4.0;
+    return avg;
+}
