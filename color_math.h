@@ -1,6 +1,8 @@
 #ifndef COLORMATH_INCLUDED
 #define COLORMATH_INCLUDED
 
+#include "pnm.h"
+
 /* We use two different structs here for clarity and modularity */
 
 /* Used for storing normalized [0, 1] RGB color representation */
@@ -41,5 +43,7 @@ extern DCTSpace_T get_DCT_space(PixSpace_T pixspace);
 extern PixSpace_T get_pix_space(DCTSpace_T dctspace);
 
 extern float get_avg_four(float a, float b, float c, float d);
+
+extern rgb_T rgb_from_pnm(Pnm_rgb pix, float denom);
 
 #endif

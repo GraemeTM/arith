@@ -7,6 +7,7 @@
 #include "pnm.h"
 #include "assert.h"
 #include "a2blocked.h"
+#include "color_math.h"
 
 
 void compress40(FILE *input)
@@ -19,7 +20,20 @@ void compress40(FILE *input)
 
     trim_edges(ppm);
 
-    printf("%u, %u\n", ppm->width, ppm->height);
+    float d = (float)ppm->denominator;
+    A2Methods_UArray2 pixmap = ppm->pixels;
+    for(int r = 0; r < (int)ppm->height; r += 2)
+    {
+        for(int c = 0; c < (int)ppm->width; c += 2)
+        {
+            rgb_T tl = rgb_from_pnm((Pnm_rgb)methods->at(pixmap, c, r), d);
+            rgb_T tr = rgb_from_pnm((Pnm_rgb)methods->at(pixmap, c + 1, r), d);
+            rgb_T bl = rgb_from_pnm((Pnm_rgb)methods->at(pixmap, c, r + 1), d);
+            rgb_T br = rgb_from_pnm((Pnm_rgb)methods->at(pixmap, c+1, r+1), d);
+            
+            
+        }
+    }
 }
 
 void decompress40(FILE *input)

@@ -2,6 +2,7 @@
 #include "assert.h"
 #include "color_math.h"
 #include "math.h"
+#include "pnm.h"
 
 ypp_T rgb_to_ypp(rgb_T rgb)
 {
@@ -57,4 +58,14 @@ float get_avg_four(float a, float b, float c, float d)
 {
     float avg = (a + b + c + d) / 4.0;
     return avg;
+}
+
+rgb_T rgb_from_pnm(Pnm_rgb pix, float denom)
+{
+    rgb_T rgb = {
+        .red = pix->red / denom,
+        .green = pix->green / denom, 
+        .blue = pix->blue / denom
+    };
+    return rgb;
 }
