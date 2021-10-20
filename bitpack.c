@@ -60,6 +60,7 @@ Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
     Except_T Bitpack_Overflow = {"Overflow packing bits"};
     if(!Bitpack_fitsu(value, width))
     {
+        fprintf(stderr, "%lu, %u\n", value, width);
         RAISE(Bitpack_Overflow);
     }
 
@@ -107,14 +108,15 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
     uint64_t mask = mask_l | mask_h;
 
     /* nullify value first*/
+
     word &= mask;
 
     /* put in new value */
-    value = value << (WORD_W - width);
-    value = value >> (WORD_W - width - lsb);
+    uint64_t val = (uint64_t)value;
+    val = val << (WORD_W - width);
+    val = val >> (WORD_W - width - lsb);
 
-
-    word |= value;
+    word |= val;
 
     return word;
 }

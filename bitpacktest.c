@@ -11,6 +11,24 @@ void printbytes(uint32_t var)
       uint64_t curr = Bitpack_getu(var, bpb, num_bytes*bpb-((i+1)*bpb));
       putchar((char)curr);
     }
+    printf("\n");
+}
+
+uint32_t reverse_endian_32(uint32_t var)
+{
+  int bpb = 8; /* bits per byte */
+  int num_bytes = 4;
+  uint64_t arr[4];
+  uint64_t word = 0;
+  for(int i = 0; i < num_bytes; i++){
+    uint64_t curr = Bitpack_getu(var, bpb, num_bytes*bpb-((i+1)*bpb));
+    arr[i] = curr;
+  }
+  for(int i = 0; i < num_bytes; i++){
+    uint64_t curr = arr[num_bytes-i-1];
+    word = Bitpack_newu(word, bpb, num_bytes*bpb-((i+1)*bpb), curr);
+  }
+  return (uint32_t)word;
 }
 
 void printbytes_lil(void *p, unsigned int len)
@@ -26,23 +44,50 @@ void printbytes_lil(void *p, unsigned int len)
 int main()
 {
 
-  int pos = 0x424141;
+//  int pos = 0x45444342;
 
 
-  printf("The bytes in memory for signed integer %d are ", pos);
-  printbytes_lil(&pos, sizeof(pos));
+  // printf("---------------\n");
+  // printf("The bytes in memory for signed integer %d are\n", pos);
+  // printbytes(pos);
+  // uint32_t newpos = reverse_endian_32(pos);
+  // printbytes(newpos);
 
 
-  printf("---------------\n");
-  printf("The bytes in memory for signed integer %d are ", pos);
-  printbytes(pos);
+  printf("%d\n", Bitpack_fitsu(33, 5));
+  printf("%d\n", Bitpack_fitss(-17, 5));
+  printf("%lu\n", Bitpack_getu(0x2f4, 6, 3));
+  printf("%li\n", Bitpack_gets(0x3f4, 6, 2));
+
+  uint64_t word = 0;
+  word = Bitpack_newu(word, 9, 23, 163);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+  word = Bitpack_newu(word, 5, 18, 1);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+
+  word = Bitpack_news(word, 5, 13, -5);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+  word = Bitpack_news(word, 5, 8, 4);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+
+  word = Bitpack_newu(word, 4, 4, 6);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+  word = Bitpack_newu(word, 4, 0, 7);
+  printf("test: %lX\n", word);
+  printf("hmm: %ld\n", Bitpack_getu(word, 9, 23));
+  printf("hmm: %ld\n", Bitpack_gets(word, 5, 18));
+  printf("hmm: %ld\n", Bitpack_gets(word, 5, 13));
+  printf("hmm: %ld\n", Bitpack_gets(word, 5, 8));
+  printf("hmm: %ld\n", Bitpack_getu(word, 4, 4));
+  printf("hmm: %ld\n", Bitpack_getu(word, 4, 0));
 
 
-  // printf("%d\n", Bitpack_fitsu(33, 5));
-  // printf("%d\n", Bitpack_fitss(-17, 5));
-  // printf("%lu\n", Bitpack_getu(0x2f4, 6, 3));
-  // printf("%li\n", Bitpack_gets(0x3f4, 6, 2));
-  //
+
   // printf("YAY: %d\n", Bitpack_getu(Bitpack_newu(5, 4, 3, 2), 4, 3) == 2);
   // printf("YAY: %d\n", Bitpack_gets(Bitpack_news(5, 4, 3, 2), 4, 3) == 2);
   // printf("YAY: %d\n",

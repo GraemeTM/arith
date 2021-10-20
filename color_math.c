@@ -62,11 +62,12 @@ float get_avg_four(float a, float b, float c, float d)
 
 ypp_T ypp_from_pnm(Pnm_rgb pix, float denom)
 {
+    printf("%u %u %u\n", pix->red, pix->green, pix->blue);
     rgb_T rgb = {
         .red = pix->red / denom,
         .green = pix->green / denom,
         .blue = pix->blue / denom
     };
-
-    return rgb_to_ypp(rgb);
+    ypp_T out = rgb_to_ypp(rgb);
+    return out;
 }

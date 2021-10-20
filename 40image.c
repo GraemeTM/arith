@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         }
         assert(argc - i <= 1);    /* at most one file on command line */
         if (i < argc) {
-                FILE *fp = fopen(argv[i], "r");
+                FILE *fp = fopen(argv[i], "rb");
                 assert(fp != NULL);
                 compress_or_decompress(fp);
                 fclose(fp);
@@ -38,5 +38,5 @@ int main(int argc, char *argv[])
                 compress_or_decompress(stdin);
         }
 
-        return EXIT_SUCCESS; 
+        return EXIT_SUCCESS;
 }
