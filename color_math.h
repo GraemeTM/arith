@@ -14,9 +14,9 @@ typedef struct rgb_T {
 
 /* Stores YPbPr representation */
 typedef struct ypp_T {
-    float Y;
-    float Pb;
-    float Pr;
+    float y;
+    float pb;
+    float pr;
 } ypp_T;
 
 typedef struct DCTSpace_T {
@@ -44,6 +44,6 @@ extern PixSpace_T get_pix_space(DCTSpace_T dctspace);
 
 extern float get_avg_four(float a, float b, float c, float d);
 
-extern rgb_T rgb_from_pnm(Pnm_rgb pix, float denom);
+extern ypp_T ypp_from_pnm(Pnm_rgb pix, float denom);
 
 #endif

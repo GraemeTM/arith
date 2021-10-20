@@ -10,15 +10,15 @@ ypp_T rgb_to_ypp(rgb_T rgb)
     assert(r >= 0 && r <= 1 && g >= 0 && g <= 1 && b >= 0 && b <= 1);
 
     ypp_T ypp;
-    ypp.Y = 0.299 * r + 0.587 * g + 0.114 * b;
-    ypp.Pb = -0.168736 * r - 0.331264 * g + 0.5 * b;
-    ypp.Pr = 0.5 * r - 0.418688 * g - 0.081312 * b;
+    ypp.y = 0.299 * r + 0.587 * g + 0.114 * b;
+    ypp.pb = -0.168736 * r - 0.331264 * g + 0.5 * b;
+    ypp.pr = 0.5 * r - 0.418688 * g - 0.081312 * b;
     return ypp;
 }
 
 rgb_T ypp_to_rgb(ypp_T ypp)
 {
-    float y = ypp.Y, pb = ypp.Pb, pr = ypp.Pr;
+    float y = ypp.y, pb = ypp.pb, pr = ypp.pr;
 
     rgb_T rgb;
     /* Use fabs cast to make sure we don't have any negative 0s */
@@ -60,12 +60,13 @@ float get_avg_four(float a, float b, float c, float d)
     return avg;
 }
 
-rgb_T rgb_from_pnm(Pnm_rgb pix, float denom)
+ypp_T ypp_from_pnm(Pnm_rgb pix, float denom)
 {
     rgb_T rgb = {
         .red = pix->red / denom,
-        .green = pix->green / denom, 
+        .green = pix->green / denom,
         .blue = pix->blue / denom
     };
-    return rgb;
+
+    return rgb_to_ypp(rgb);
 }

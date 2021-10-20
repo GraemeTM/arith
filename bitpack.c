@@ -7,16 +7,7 @@
 
 #define WORD_W 64
 
-void
-printbytes(void *p, unsigned int len)
-{
-    unsigned int i;
-    unsigned char *cp = (unsigned char *)p;
-    for (i = 0; i < len; i++) {
-        printf("%02X", *cp++);
-    }
-    printf("\n");
-} 
+
 
 bool Bitpack_fitsu(uint64_t n, unsigned width)
 {
@@ -60,7 +51,7 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
 }
 
 
-uint64_t 
+uint64_t
 Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
 {
     assert(width <= WORD_W);
@@ -80,12 +71,12 @@ Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
     mask_l = mask_l >> (64 - lsb);
 
     uint64_t mask = mask_l | mask_h;
-        
+
     /* nullify value first*/
     word &= mask;
     /* put in new value */
     value = value << lsb;
-    
+
 
     word = word | value;
 
@@ -93,15 +84,16 @@ Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
 }
 
 
-uint64_t 
-Bitpack_news(uint64_t word, unsigned width, unsigned lsb,  int64_t value)
+uint64_t
+Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
 {
     assert(width <= WORD_W);
     assert(width + lsb <= WORD_W);
 
     Except_T Bitpack_Overflow = {"Overflow packing bits"};
-    if (!Bitpack_fitsu(value, width))
+    if (!Bitpack_fitss(value, width))
     {
+
         RAISE(Bitpack_Overflow);
     }
 
@@ -116,14 +108,12 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb,  int64_t value)
 
     /* nullify value first*/
     word &= mask;
-    
+
     /* put in new value */
-    printf("value: %li\n", value);
     value = value << (WORD_W - width);
     value = value >> (WORD_W - width - lsb);
-    printf("value: %li\n", value);
-    
-    
+
+
     word |= value;
 
     return word;

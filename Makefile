@@ -36,7 +36,7 @@ LDFLAGS = -g -L/comp/40/build/lib -L/usr/sup/cii40/lib64 -LARITH40 -L40LOCALITY
 # 40locality is a catch-all for this assignment, netpbm is needed for pnm
 # rt is for the "real time" timing library, which contains the clock support
 # ================ NOTE MAYBE LARITH40 WRONG ==================
-LDLIBS = -LARITH40 -lpnm -lnetpbm -lcii40 -lm -lrt
+LDLIBS = -LARITH40 -lpnm -lnetpbm -lcii40 -lm -lrt -L/comp/40/build/lib -larith40
 
 # Collect all .h files in your directory.
 # This way, you can never forget to add
@@ -68,7 +68,7 @@ cmtest: cmtest.o color_math.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 40image: 40image.o compress40.o imghandling.o a2blocked.o uarray2b.o uarray2.o \
-	color_math.o
+	color_math.o bitpack.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 btest: bitpacktest.o bitpack.o
