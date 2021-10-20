@@ -50,7 +50,7 @@ usage(const char *progname)
 int main(int argc, char *argv[])
 {
     assert(argc == 3);
-    
+
     char *ppm1_name = argv[1];
     char *ppm2_name = argv[2];
 
@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
 
     Pnm_ppm ppm1 = Pnm_ppmread(fp1, methods);
     Pnm_ppm ppm2 = Pnm_ppmread(fp2, methods);
+    printf("%d/%d v %d/%d", ppm1->width, ppm1->height, ppm2->width, ppm2->height);
 
     if (abs((int)ppm1->width - (int)ppm2->width) > 1 ||
         abs((int)ppm1->height - (int)ppm2->height) > 1)
@@ -84,21 +85,23 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Dimensions should differ by at most 1\n");
         fprintf(stdout, "%f\n", 1.0);
     }
-
+    printf("HMMM\n");
     double final_sum = 0;
     closure cl = malloc(sizeof(*cl));
     cl->sum = &final_sum;
     cl->pixmap2 = ppm2->pixels;
     cl->methods = methods;
+    printf("HMMM\n");
 
     int sm_width = ppm1->width < ppm2->width ? ppm1->width : ppm2->width;
     int sm_height = ppm1->height < ppm2->height ? ppm1->height : ppm2->height;
+    printf("HMMM\n");
 
 
     methods->map_default(ppm1->pixels, map_pixels_comp_sum, cl);
 
-    printf("W/H: %d, %d\n", ppm1->width, ppm1->height);
-    printf("%f\n", final_sum);
+
+
     double e = sqrt(final_sum / ((double)sm_width * (double)sm_height * 3.0));
     e /= ppm1->denominator;
 
@@ -113,23 +116,25 @@ int main(int argc, char *argv[])
 void map_pixels_comp_sum(int i, int j, A2Methods_UArray2 array2,
                        A2Methods_Object *elem, void *cl)
 {
-    (void)array2;
-
     /* Get closure */
+
     closure c = (closure)cl;
+    (void)array2;
+    if(i < c->methods->width(array2) && i < c->methods->width(c->pixmap2) &&
+       j < c->methods->height(array2) && j < c->methods->height(c->pixmap2))
+    {
 
-    Pnm_rgb pix1 = ((Pnm_rgb)elem);
-    Pnm_rgb pix2 = ((Pnm_rgb)c->methods->at(c->pixmap2, i, j));
-    
 
-    double rdiff = pow((double)pix1->red - (double)pix2->red, 2);
-    double bdiff = pow((double)pix1->blue - (double)pix2->blue, 2);
-    double gdiff = pow((double)pix1->green - (double)pix2->green, 2);
+        Pnm_rgb pix1 = ((Pnm_rgb)elem);
+        Pnm_rgb pix2 = ((Pnm_rgb)c->methods->at(c->pixmap2, i, j));
 
-    
-    double to_add = (rdiff + bdiff + gdiff);
-    printf("%f\n", to_add);
-    *(c->sum) += to_add;
+        double rdiff = pow((double)pix1->red - (double)pix2->red, 2);
+        double bdiff = pow((double)pix1->blue - (double)pix2->blue, 2);
+        double gdiff = pow((double)pix1->green - (double)pix2->green, 2);
+
+        double to_add = (rdiff + bdiff + gdiff);
+        *(c->sum) += to_add;
+    }
 }
 
 /*

@@ -71,3 +71,25 @@ ypp_T ypp_from_pnm(Pnm_rgb pix, float denom)
     ypp_T out = rgb_to_ypp(rgb);
     return out;
 }
+
+DCTSpace_T new_dct_t(float a, float b, float c, float d)
+{
+    DCTSpace_T out = {
+      .a = a,
+      .b = b,
+      .c = c,
+      .d = d
+    };
+    return out;
+}
+
+PixSpace_T new_pix_t(float y1, float y2, float y3, float y4)
+{
+    PixSpace_T out = {
+      .y1 = y1,
+      .y2 = y2,
+      .y3 = y3,
+      .y4 = y4
+    };
+    return out;
+}

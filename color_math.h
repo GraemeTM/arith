@@ -46,4 +46,9 @@ extern float get_avg_four(float a, float b, float c, float d);
 
 extern ypp_T ypp_from_pnm(Pnm_rgb pix, float denom);
 
+extern DCTSpace_T new_dct_t(float a, float b, float c, float d);
+
+extern PixSpace_T new_pix_t(float y1, float y2, float y3, float y4);
+
+
 #endif
