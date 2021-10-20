@@ -42,7 +42,8 @@ void read_header(FILE *fp, unsigned *width, unsigned *height)
 Pnm_ppm Pnm_ppm_new(unsigned width, unsigned height, unsigned denominator,
                    A2Methods_T methods)
 {
-    malloc(sizeof(*out));
+
+    Pnm_ppm out = malloc(sizeof(*out));
     assert(out);
 
     out->width = width;

@@ -18,6 +18,24 @@
 
 typedef uint32_t word_t;
 
+/* stores codeword information in pairs of the order [width, lsb] */
+typedef struct codeword_t {
+  float a[2];
+  float b[2];
+  float c[2];
+  float d[2];
+  float pb[2];
+  float pr[2];
+} codeword_t;
+
+codeword_t CODEWORD = {
+  .a = {9, 23},
+  .b = {5, 18},
+  .c = {5, 13},
+  .d = {5, 8},
+  .pb = {4, 4},
+  .pr = {4, 0}
+};
 
 typedef struct Unpack_T {
     float a;
@@ -27,8 +45,6 @@ typedef struct Unpack_T {
     float pb;
     float pr;
 } Unpack_T;
-
-
 
 
 word_t get_word_from_chunk(int col, int row, A2Methods_T methods,
@@ -69,6 +85,7 @@ void decompress40(FILE *input)
     unsigned width, height;
     read_header(input, &width, &height);
 
+    A2Methods_T methods = uarray2_methods_blocked;
     Pnm_ppm out = Pnm_ppm_new(width, height, DENOM, methods);
 
     for(int r = 0; r < (int)height; r += 2)
@@ -77,23 +94,16 @@ void decompress40(FILE *input)
         {
             word_t word = get_word_from_file(input);
             Unpack_T unpacked_word = unpack_word(word);
-            DCTSpace_T dct = {
-              .a = unpacked_word.a,
-              .b = unpacked_word.b,
-              .c = unpacked_word.c,
-              .d = unpacked_word.d,
-            };
+            DCTSpace_T dct = new_dct_t(unpacked_word.a, unpacked_word.b,
+                                       unpacked_word.c, unpacked_word.d);
             PixSpace_T pix_y = get_pix_space(dct);
             update_pix_map(out->pixels, pix_y, unpacked_word.pb,
                            unpacked_word.pr, methods, c, r);
         }
     }
 
-
     Pnm_ppmwrite(stdout, out);
-
     Pnm_ppmfree(&out);
-
 }
 
 word_t get_word_from_chunk(int col, int row, A2Methods_T methods,
@@ -120,12 +130,14 @@ word_t get_word_from_chunk(int col, int row, A2Methods_T methods,
 
     uint64_t word = 0;
 
-    word = Bitpack_newu(word, 9, 23, (uint64_t)round(dct.a));
-    word = Bitpack_news(word, 5, 18, (int64_t)round(dct.b));
-    word = Bitpack_news(word, 5, 13, (int64_t)round(dct.c));
-    word = Bitpack_news(word, 5, 8, (int64_t)round(dct.d));
-    word = Bitpack_newu(word, 4, 4, (uint64_t)idx_pb);
-    word = Bitpack_newu(word, 4, 0, (uint64_t)idx_pr);
+    codeword_t cw = CODEWORD;
+
+    word = Bitpack_newu(word, cw.a[0], cw.a[1], (uint64_t)round(dct.a));
+    word = Bitpack_news(word, cw.b[0], cw.b[1], (int64_t)round(dct.b));
+    word = Bitpack_news(word, cw.c[0], cw.c[1], (int64_t)round(dct.c));
+    word = Bitpack_news(word, cw.d[0], cw.d[1], (int64_t)round(dct.d));
+    word = Bitpack_newu(word, cw.pb[0], cw.pb[1], (uint64_t)idx_pb);
+    word = Bitpack_newu(word, cw.pr[0], cw.pr[1], (uint64_t)idx_pr);
 
     return (word_t)word;
 }
@@ -183,13 +195,14 @@ uint64_t readbytes(unsigned char c, int idx, uint64_t word)
 Unpack_T unpack_word(word_t word)
 {
     Unpack_T out;
+    codeword_t cw = CODEWORD;
 
-    out.a = Bitpack_getu(word, 9, 23) / (float)A_SCALE;
-    out.b = Bitpack_gets(word, 5, 18) / (float)BCD_SCALE;
-    out.c = Bitpack_gets(word, 5, 13) / (float)BCD_SCALE;
-    out.d = Bitpack_gets(word, 5, 8) / (float)BCD_SCALE;
-    out.pb = Arith40_chroma_of_index(Bitpack_getu(word, 4, 4));
-    out.pr = Arith40_chroma_of_index(Bitpack_getu(word, 4, 0));
+    out.a = Bitpack_getu(word, cw.a[0], cw.a[1]) / (float)A_SCALE;
+    out.b = Bitpack_gets(word, cw.b[0], cw.b[1]) / (float)BCD_SCALE;
+    out.c = Bitpack_gets(word, cw.c[0], cw.c[1]) / (float)BCD_SCALE;
+    out.d = Bitpack_gets(word, cw.d[0], cw.d[1]) / (float)BCD_SCALE;
+    out.pb = Arith40_chroma_of_index(Bitpack_getu(word, cw.pb[0], cw.pb[1]));
+    out.pr = Arith40_chroma_of_index(Bitpack_getu(word, cw.pr[0], cw.pr[1]));
 
     return out;
 }
