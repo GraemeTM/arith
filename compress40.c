@@ -77,6 +77,7 @@ void compress40(FILE *input)
             printbytes(word);
         }
     }
+    Pnm_ppmfree(&ppm);
 }
 
 
