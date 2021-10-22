@@ -67,12 +67,15 @@ ppmdiff: ppmdiff.o a2plain.o uarray2.o
 cmtest: cmtest.o color_math.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-40image: 40image.o compress40.o imghandling.o a2blocked.o uarray2b.o uarray2.o \
+40image: 40image.o compress40.o imghandling.o uarray2b.o uarray2.o \
 	color_math.o bitpack.o a2plain.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 btest: bitpacktest.o bitpack.o
-		$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
+makeppm: make_ppm.o imghandling.o a2plain.o uarray2.o
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 
 clean:

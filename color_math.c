@@ -1,8 +1,21 @@
+/*
+ *     color_math.c
+ *     by Henry Gray, Graeme McDonough, Oct. 2021
+ *     hgray03, gmcdon03
+ *     arith
+ *
+ *     implentation of color representation conversion and manipulation 
+ *      functions
+ */
+
 #include <stdlib.h>
 #include "assert.h"
 #include "color_math.h"
 #include "math.h"
 #include "pnm.h"
+
+/* See color_math.h for function contracts */
+
 
 ypp_T rgb_to_ypp(rgb_T rgb)
 {
@@ -16,6 +29,7 @@ ypp_T rgb_to_ypp(rgb_T rgb)
     return ypp;
 }
 
+
 rgb_T ypp_to_rgb(ypp_T ypp)
 {
     float y = ypp.y, pb = ypp.pb, pr = ypp.pr;
@@ -27,6 +41,7 @@ rgb_T ypp_to_rgb(ypp_T ypp)
     rgb.blue = fabs(1.0 * y + 1.772 * pb + 0.0 * pr);
     return rgb;
 }
+
 
 DCTSpace_T get_DCT_space(PixSpace_T pixspace)
 {
@@ -41,6 +56,7 @@ DCTSpace_T get_DCT_space(PixSpace_T pixspace)
     return dct;
 }
 
+
 PixSpace_T get_pix_space(DCTSpace_T dctspace)
 {
     float a = dctspace.a, b = dctspace.b, c = dctspace.c, d = dctspace.d;
@@ -54,11 +70,13 @@ PixSpace_T get_pix_space(DCTSpace_T dctspace)
     return pix;
 }
 
+
 float get_avg_four(float a, float b, float c, float d)
 {
     float avg = (a + b + c + d) / 4.0;
     return avg;
 }
+
 
 ypp_T ypp_from_pnm(Pnm_rgb pix, float denom)
 {
@@ -70,6 +88,7 @@ ypp_T ypp_from_pnm(Pnm_rgb pix, float denom)
     return rgb_to_ypp(rgb);
 }
 
+
 DCTSpace_T new_dct_t(float a, float b, float c, float d)
 {
     DCTSpace_T out = {
@@ -80,6 +99,7 @@ DCTSpace_T new_dct_t(float a, float b, float c, float d)
     };
     return out;
 }
+
 
 PixSpace_T new_pix_t(float y1, float y2, float y3, float y4)
 {
