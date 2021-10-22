@@ -29,12 +29,8 @@ typedef struct codeword_t {
 } codeword_t;
 
 codeword_t CODEWORD = {
-  .a = {9, 23},
-  .b = {5, 18},
-  .c = {5, 13},
-  .d = {5, 8},
-  .pb = {4, 4},
-  .pr = {4, 0}
+  .a = {9, 23}, .b = {5, 18}, .c = {5, 13},
+  .d = {5, 8}, .pb = {4, 4}, .pr = {4, 0}
 };
 
 typedef struct Unpack_T {

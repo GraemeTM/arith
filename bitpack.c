@@ -94,7 +94,7 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
     Except_T Bitpack_Overflow = {"Overflow packing bits"};
     if (!Bitpack_fitss(value, width))
     {
-
+        fprintf(stderr, "%u, %lu\n", width, value);
         RAISE(Bitpack_Overflow);
     }
 
