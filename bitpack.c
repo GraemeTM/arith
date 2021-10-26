@@ -1,12 +1,3 @@
-/*
- *     bitpack.c
- *     by Henry Gray, Graeme McDonough, Oct. 2021
- *     hgray03, gmcdon03
- *     arith
- *
- *     Implementation of bitpacking functions
- */
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "math.h"
@@ -67,8 +58,8 @@ Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
     assert(width + lsb <= WORD_W);
 
     Except_T Bitpack_Overflow = {"Overflow packing bits"};
-    if(!Bitpack_fitsu(value, width))
-    {
+    if (!Bitpack_fitsu(value, width)) {
+        fprintf(stderr, "%lu, %u\n", value, width);
         RAISE(Bitpack_Overflow);
     }
 
@@ -100,8 +91,7 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
     assert(width + lsb <= WORD_W);
 
     Except_T Bitpack_Overflow = {"Overflow packing bits"};
-    if (!Bitpack_fitss(value, width))
-    {
+    if (!Bitpack_fitss(value, width)) {
         fprintf(stderr, "%u, %lu\n", width, value);
         RAISE(Bitpack_Overflow);
     }

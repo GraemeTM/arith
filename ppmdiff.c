@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
 
     Pnm_ppm ppm1 = Pnm_ppmread(fp1, methods);
     Pnm_ppm ppm2 = Pnm_ppmread(fp2, methods);
-    printf("%d/%d v %d/%d", ppm1->width, ppm1->height, ppm2->width, ppm2->height);
 
     if (abs((int)ppm1->width - (int)ppm2->width) > 1 ||
         abs((int)ppm1->height - (int)ppm2->height) > 1)
@@ -87,19 +86,17 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Dimensions should differ by at most 1\n");
         fprintf(stdout, "%f\n", 1.0);
     }
-    printf("HMMM\n");
     double final_sum = 0;
     closure cl = malloc(sizeof(*cl));
+    assert(cl);
     cl->sum = &final_sum;
     cl->pixmap2 = ppm2->pixels;
     cl->methods = methods;
     cl->d1 = ppm1->denominator;
     cl->d2 = ppm2->denominator;
-    printf("HMMM\n");
 
     int sm_width = ppm1->width < ppm2->width ? ppm1->width : ppm2->width;
     int sm_height = ppm1->height < ppm2->height ? ppm1->height : ppm2->height;
-    printf("HMMM\n");
 
 
     methods->map_default(ppm1->pixels, map_pixels_comp_sum, cl);
@@ -107,8 +104,6 @@ int main(int argc, char *argv[])
 
 
     double e = sqrt(final_sum / ((double)sm_width * (double)sm_height * 3.0));
-    //e /= ppm1->denominator;
-    printf("denom: %u, %u\n", ppm1->denominator, ppm2->denominator);
 
     printf("%1.4f\n", e);
 
