@@ -24,6 +24,8 @@ typedef struct closure {
     double *sum;
     A2Methods_UArray2 pixmap2;
     A2Methods_T methods;
+    unsigned d1;
+    unsigned d2;
 } *closure;
 
 /* Function prototype for opening file, defined later */
@@ -91,6 +93,8 @@ int main(int argc, char *argv[])
     cl->sum = &final_sum;
     cl->pixmap2 = ppm2->pixels;
     cl->methods = methods;
+    cl->d1 = ppm1->denominator;
+    cl->d2 = ppm2->denominator;
     printf("HMMM\n");
 
     int sm_width = ppm1->width < ppm2->width ? ppm1->width : ppm2->width;
@@ -103,7 +107,8 @@ int main(int argc, char *argv[])
 
 
     double e = sqrt(final_sum / ((double)sm_width * (double)sm_height * 3.0));
-    e /= ppm1->denominator;
+    //e /= ppm1->denominator;
+    printf("denom: %u, %u\n", ppm1->denominator, ppm2->denominator);
 
     printf("%1.4f\n", e);
 
@@ -123,14 +128,15 @@ void map_pixels_comp_sum(int i, int j, A2Methods_UArray2 array2,
     if(i < c->methods->width(array2) && i < c->methods->width(c->pixmap2) &&
        j < c->methods->height(array2) && j < c->methods->height(c->pixmap2))
     {
-
+        unsigned d1 = c->d1;
+        unsigned d2 = c->d2;
 
         Pnm_rgb pix1 = ((Pnm_rgb)elem);
         Pnm_rgb pix2 = ((Pnm_rgb)c->methods->at(c->pixmap2, i, j));
 
-        double rdiff = pow((double)pix1->red - (double)pix2->red, 2);
-        double bdiff = pow((double)pix1->blue - (double)pix2->blue, 2);
-        double gdiff = pow((double)pix1->green - (double)pix2->green, 2);
+        double rdiff = pow(pix1->red/(double)d1 - pix2->red/(double)d2, 2);
+        double bdiff = pow(pix1->blue/(double)d1 - pix2->blue/(double)d2, 2);
+        double gdiff = pow(pix1->green/(double)d1 - pix2->green/(double)d2, 2);
 
         double to_add = (rdiff + bdiff + gdiff);
         *(c->sum) += to_add;
