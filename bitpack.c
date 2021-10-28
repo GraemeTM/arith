@@ -16,7 +16,10 @@
 
 #define WORD_W 64
 
-
+uint64_t lshiftu(uint64_t word, int shift);
+uint64_t rshiftu(uint64_t word, int shift);
+int64_t lshifts(int64_t word, int shift);
+int64_t rshifts(int64_t word, int shift);
 
 bool Bitpack_fitsu(uint64_t n, unsigned width)
 {
@@ -36,10 +39,11 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
     assert(width + lsb <= WORD_W);
 
     uint64_t bitmask = ~0;
-    bitmask = bitmask >> (WORD_W - width) << lsb;
+    bitmask = rshiftu(bitmask, (WORD_W - width));
+    bitmask = lshiftu(bitmask, lsb);
 
     uint64_t val = bitmask & word;
-    val = val >> lsb;
+    val = rshiftu(val, lsb);
     return val;
 }
 
@@ -49,12 +53,13 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
     assert(width + lsb <= WORD_W);
 
     uint64_t bitmask = ~0;
-    bitmask = bitmask >> (WORD_W- width) << lsb;
+    bitmask = rshiftu(bitmask, (WORD_W - width)); 
+    bitmask = lshiftu(bitmask, lsb);
 
     int64_t val = bitmask & word;
 
-    val = val << (WORD_W - (width + lsb));
-    val = val >> (WORD_W - width);
+    val = lshifts(val, (WORD_W - (width + lsb)));
+    val = rshifts(val, (WORD_W - width));
 
     return val;
 }
@@ -74,17 +79,17 @@ Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value)
 
     /* Get 0s in range to nullify exisiting value */
     uint64_t mask_h = ~0;
-    mask_h = mask_h << (width + lsb);
+    mask_h = lshiftu(mask_h, (width + lsb));
 
     uint64_t mask_l = ~0;
-    mask_l = mask_l >> (64 - lsb);
+    mask_l = rshiftu(mask_l, 64 - lsb);
 
     uint64_t mask = mask_l | mask_h;
 
     /* nullify value first*/
     word &= mask;
     /* put in new value */
-    value = value << lsb;
+    value = lshiftu(value, lsb);
 
 
     word = word | value;
@@ -108,10 +113,10 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
 
     /* Get 0s in range to nullify exisiting value */
     uint64_t mask_h = ~0;
-    mask_h = mask_h << (width + lsb);
+    mask_h = lshiftu(mask_h, width + lsb);
 
     uint64_t mask_l = ~0;
-    mask_l = mask_l >> (64 - lsb);
+    mask_l = rshiftu(mask_l, 64 - lsb);
 
     uint64_t mask = mask_l | mask_h;
 
@@ -121,10 +126,57 @@ Bitpack_news(uint64_t word, unsigned width, unsigned lsb, int64_t value)
 
     /* put in new value */
     uint64_t val = (uint64_t)value;
-    val = val << (WORD_W - width);
-    val = val >> (WORD_W - width - lsb);
+    val = lshiftu(val, WORD_W - width);
+    val = rshiftu(val, WORD_W - width - lsb);
 
     word |= val;
 
     return word;
 }
+
+
+/* All functions just check for shifts of 64 and account for this */
+uint64_t lshiftu(uint64_t word, int shift)
+{
+    if (shift == 64) {
+        word = word << 1;
+        word = word << (WORD_W - 1);
+    } else {
+        word = word << shift;
+    }
+    return word;
+}
+
+uint64_t rshiftu(uint64_t word, int shift)
+{
+    if (shift == 64) {
+        word = word >> 1;
+        word = word >> (WORD_W - 1);
+    } else {
+        word = word >> shift;
+    }
+    return word;
+}
+
+int64_t lshifts(int64_t word, int shift)
+{
+    if (shift == 64) {
+        word = word << 1;
+        word = word << (WORD_W - 1);
+    } else {
+        word = word << shift;
+    }
+    return word;
+}
+
+int64_t rshifts(int64_t word, int shift)
+{
+    if (shift == 64) {
+        word = word >> 1;
+        word = word >> (WORD_W - 1);
+    } else {
+        word = word >> shift;
+    }
+    return word;
+}
+

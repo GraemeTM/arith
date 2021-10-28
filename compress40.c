@@ -195,7 +195,9 @@ word_t get_word_from_file(FILE *fp)
     for(int i = 0; i < 4; i++)
     {
         /* Read in only 32 bits (1byte * 4) */
-        out = readbytes(fgetc(fp), i, out);
+        int c = fgetc(fp);
+        assert(!feof(fp));
+        out = readbytes(c, i, out);
     }
     return (word_t)out;
 }

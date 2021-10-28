@@ -7,7 +7,7 @@ int main()
     rgb_T rgb = {.red = 1.0, .green = 0.0, .blue = 0.0};
 
     ypp_T ypp = rgb_to_ypp(rgb);
-    printf("[%1.2f, %1.2f, %1.2f]\n", ypp.Y, ypp.Pb, ypp.Pr);
+    printf("[%1.2f, %1.2f, %1.2f]\n", ypp.y, ypp.pb, ypp.pr);
 
     rgb = ypp_to_rgb(ypp);
     printf("[%1.2f, %1.2f, %1.2f]\n", rgb.red, rgb.green, rgb.blue);

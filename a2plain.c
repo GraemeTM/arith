@@ -28,7 +28,7 @@ static A2Methods_UArray2 new_with_blocksize(int width, int height, int size, int
 
 static void a2free(A2Methods_UArray2 *array2)
 {
-	UArray2_free((UArray2_T *) array2);
+        UArray2_free((UArray2_T *) array2);
 }
 
 static int width(A2Methods_UArray2 a2)
@@ -54,7 +54,7 @@ static int blocksize(A2Methods_UArray2 a2)
 
 static A2Methods_Object *at(A2Methods_UArray2 array2, int i, int j)
 {
-	return UArray2_at(array2, i, j);
+        return UArray2_at(array2, i, j);
 }
 
 /* TODO: ...many more private (static) definitions follow */
@@ -117,11 +117,11 @@ static struct A2Methods_T uarray2_methods_plain_struct = {
     map_row_major,
     map_col_major,
     NULL,     // map_block_major,
-    map_row_major,	    // map_default
+    map_row_major,          // map_default
     small_map_row_major,
     small_map_col_major,
     NULL,                  // small_map_block_major,
-    small_map_row_major,	// small_map_default
+    small_map_row_major,        // small_map_default
 };
 
 // finally the payoff: here is the exported pointer to the struct
