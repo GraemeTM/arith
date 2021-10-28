@@ -8,7 +8,7 @@ void printbytes(uint32_t var)
 {
     int bpb = 8; /* bits per byte */
     int num_bytes = 4;
-    for(int i = 0; i < num_bytes; i++){
+    for (int i = 0; i < num_bytes; i++) {
       uint64_t curr = Bitpack_getu(var, bpb, num_bytes*bpb-((i+1)*bpb));
       putchar((char)curr);
     }
@@ -21,11 +21,11 @@ uint32_t reverse_endian_32(uint32_t var)
   int num_bytes = 4;
   uint64_t arr[4];
   uint64_t word = 0;
-  for(int i = 0; i < num_bytes; i++){
+  for (int i = 0; i < num_bytes; i++) {
     uint64_t curr = Bitpack_getu(var, bpb, num_bytes*bpb-((i+1)*bpb));
     arr[i] = curr;
   }
-  for(int i = 0; i < num_bytes; i++){
+  for (int i = 0; i < num_bytes; i++) {
     uint64_t curr = arr[num_bytes-i-1];
     word = Bitpack_newu(word, bpb, num_bytes*bpb-((i+1)*bpb), curr);
   }
@@ -45,9 +45,15 @@ void printbytes_lil(void *p, unsigned int len)
 int main()
 {
     uint64_t word = 0;
+<<<<<<< HEAD
  int values[16] = {-12, 3, 3, -6, -1, 0, 1, 4, 12, -2, 61, 0, 1, -1, -7, -7};
 //int values[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 //int values[16] = {-8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0};
+=======
+    // int values[16] = {-12, 3, 3, -6, -1, 0, 1, 4, 12, -2, 61, 0, 1, -1, -7, -7};
+    //int values[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    //int values[16] = {-8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0, -8, 0};
+>>>>>>> 54b5e496f7650fdd497ac247beaab2f733e856e9
     int num_val = 16;
     int codeword[32] = {
       5, 3, 3, 5, 4, 4, 3, 5, 5, 3, 7, 1, 3, 5, 4, 4,
@@ -60,7 +66,7 @@ int main()
     // };
     // int values[16] = {-64, 0, -63, 0, -62, 0, -61, 0, -60, 0, -59, 0, -58, 0, -57, 0};
     int sum = 0;
-    for(int i = 0; i < num_val; i++)
+    for (int i = 0; i < num_val; i++)
     {
 
       sum += codeword[i];
@@ -68,11 +74,11 @@ int main()
       word = Bitpack_news(word, codeword[i], codeword[i+num_val], values[i]);
     }
     int all_good = 1;
-    for(int i = 0; i < num_val; i++)
+    for (int i = 0; i < num_val; i++)
     {
         int val = Bitpack_gets(word, codeword[i], codeword[i+num_val]);
         all_good = val == values[i];
-        if(!all_good)
+        if (!all_good)
         {
            fprintf(stderr, "Damb\n");
            printf("word: %lX\n", word);

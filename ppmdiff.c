@@ -24,6 +24,8 @@ typedef struct closure {
     double *sum;
     A2Methods_UArray2 pixmap2;
     A2Methods_T methods;
+    unsigned d1;
+    unsigned d2;
 } *closure;
 
 /* Function prototype for opening file, defined later */
@@ -77,7 +79,6 @@ int main(int argc, char *argv[])
 
     Pnm_ppm ppm1 = Pnm_ppmread(fp1, methods);
     Pnm_ppm ppm2 = Pnm_ppmread(fp2, methods);
-    printf("%d/%d v %d/%d", ppm1->width, ppm1->height, ppm2->width, ppm2->height);
 
     if (abs((int)ppm1->width - (int)ppm2->width) > 1 ||
         abs((int)ppm1->height - (int)ppm2->height) > 1)
@@ -85,17 +86,17 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Dimensions should differ by at most 1\n");
         fprintf(stdout, "%f\n", 1.0);
     }
-    printf("HMMM\n");
     double final_sum = 0;
     closure cl = malloc(sizeof(*cl));
+    assert(cl);
     cl->sum = &final_sum;
     cl->pixmap2 = ppm2->pixels;
     cl->methods = methods;
-    printf("HMMM\n");
+    cl->d1 = ppm1->denominator;
+    cl->d2 = ppm2->denominator;
 
     int sm_width = ppm1->width < ppm2->width ? ppm1->width : ppm2->width;
     int sm_height = ppm1->height < ppm2->height ? ppm1->height : ppm2->height;
-    printf("HMMM\n");
 
 
     methods->map_default(ppm1->pixels, map_pixels_comp_sum, cl);
@@ -103,7 +104,6 @@ int main(int argc, char *argv[])
 
 
     double e = sqrt(final_sum / ((double)sm_width * (double)sm_height * 3.0));
-    e /= ppm1->denominator;
 
     printf("%1.4f\n", e);
 
@@ -123,14 +123,15 @@ void map_pixels_comp_sum(int i, int j, A2Methods_UArray2 array2,
     if(i < c->methods->width(array2) && i < c->methods->width(c->pixmap2) &&
        j < c->methods->height(array2) && j < c->methods->height(c->pixmap2))
     {
-
+        unsigned d1 = c->d1;
+        unsigned d2 = c->d2;
 
         Pnm_rgb pix1 = ((Pnm_rgb)elem);
         Pnm_rgb pix2 = ((Pnm_rgb)c->methods->at(c->pixmap2, i, j));
 
-        double rdiff = pow((double)pix1->red - (double)pix2->red, 2);
-        double bdiff = pow((double)pix1->blue - (double)pix2->blue, 2);
-        double gdiff = pow((double)pix1->green - (double)pix2->green, 2);
+        double rdiff = pow(pix1->red/(double)d1 - pix2->red/(double)d2, 2);
+        double bdiff = pow(pix1->blue/(double)d1 - pix2->blue/(double)d2, 2);
+        double gdiff = pow(pix1->green/(double)d1 - pix2->green/(double)d2, 2);
 
         double to_add = (rdiff + bdiff + gdiff);
         *(c->sum) += to_add;
